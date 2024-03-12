@@ -102,4 +102,33 @@ module.exports.getStudentsByCourse = function (course) {
     });
 };
 
-
+// Function to add a new student
+module.exports.addStudent = function (studentData) {
+    return new Promise((resolve, reject) => {
+        // Set TA to false if it's undefined, otherwise set it to true
+        studentData.TA = studentData.TA === undefined ? false : true;
+        
+        // Set studentNum property of studentData
+        studentData.studentNum = dataCollection.students.length + 1;
+        
+        // Push updated studentData object onto dataCollection.students array
+        dataCollection.students.push(studentData);
+        
+        // Check if there was an error while adding the student (optional)
+        // For example, if dataCollection.students is not defined or not an array
+        if (!Array.isArray(dataCollection.students)) {
+          reject("Error: Unable to add student. Data collection is not valid.");
+        } else {
+          // Write updated data to students.json file
+          fs.writeFile('./data/students.json', JSON.stringify(dataCollection.students), (err) => {
+            if (err) {
+              reject("Error: Unable to save updated students data.");
+            } else {
+              // Resolve the promise if no error occurred
+              resolve();
+            }
+          });
+        }
+      });
+    }
+  
